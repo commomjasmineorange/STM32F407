@@ -1,0 +1,16 @@
+# CMake 构建目录
+/build/
+/cmake-build-*/
+/CMakeUserPresets.json
+/compile_commands.json
+
+# 当前机器的 VS Code 配置
+/.vscode/
+
+# 临时和备份文件
+*.backup
+*.bak
+*.tmp
+*.swp
+Thumbs.db
+.DS_Store
