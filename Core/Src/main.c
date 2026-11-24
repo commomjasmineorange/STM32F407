@@ -114,7 +114,10 @@ int main(void)
   BSP_LED_Init();
   BSP_KEY_Init();
   BSP_BEEP_Init();
-  BSP_ADC_Init();
+  if (BSP_ADC_Init() != HAL_OK)
+  {
+    Error_Handler();
+  }
 
   /* 启动 DMA + IDLE 接收 */
   if (BSP_UART_Init() != HAL_OK)

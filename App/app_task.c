@@ -76,6 +76,9 @@ void APP_Task_Init(void)
     {
         Error_Handler();
     }
+
+    // 启动监视器任务
+    APP_Monitor_TaskCreate();
     /* 启动任务调度器 */
     vTaskStartScheduler();
 

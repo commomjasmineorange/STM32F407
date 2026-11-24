@@ -92,10 +92,10 @@
 /* 栈溢出检测方式 2（并非能检测所有栈溢出）。
  * 必须实现 vApplicationStackOverflowHook(TaskHandle_t, char *)。
  */
-#define configCHECK_FOR_STACK_OVERFLOW 0
+#define configCHECK_FOR_STACK_OVERFLOW 2
 
 /* 堆分配失败时调用 vApplicationMallocFailedHook(void)，必须实现。 */
-#define configUSE_MALLOC_FAILED_HOOK 0
+#define configUSE_MALLOC_FAILED_HOOK 1
 
 /*==================== 5. 软件定时器 ===================*/
 

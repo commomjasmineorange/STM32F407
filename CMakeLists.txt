@@ -70,9 +70,11 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     FreeRTOS/port/MemMang/heap_4.c
 
     #FreeRTOS 任务函数
-    APP/app_task.c
-    APP/app_uart.c
-    APP/app_sensor.c
+    App/app_task.c
+    App/app_uart.c
+    App/app_sensor.c
+    App/app_rtos_hooks.c
+    App/app_monitor.c
 )
 
 # Add include paths

@@ -64,9 +64,10 @@ static void Sensor_Task(void *argument)
     (void)argument;
     BSP_ADC_Result_t result;
     TickType_t last_wake_time;
+    last_wake_time = xTaskGetTickCount();
     for (;;)
     {
-        last_wake_time = xTaskGetTickCount();
+
         if (BSP_ADC_GetResult(&result))
         {
             /*
