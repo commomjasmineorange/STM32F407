@@ -75,6 +75,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/app_sensor.c
     App/app_rtos_hooks.c
     App/app_monitor.c
+
+    Protocol/modbus_crc.c
+    Protocol/modbus_rtu.c
+
 )
 
 # Add include paths

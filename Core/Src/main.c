@@ -38,6 +38,9 @@
 #include "BSP/ADC/bsp_adc.h"
 #include "BSP/FLASH/bsp_flash.h"
 
+#include "Protocol/modbus_rtu.h"
+#include "Protocol/modbus_crc.h"
+
 #include "App/app_task.h"
 #include "App/app_sensor.h"
 /* USER CODE END Includes */
@@ -138,10 +141,26 @@ int main(void)
   lcd_put_text(4, 1, "Count: ", BLACK);
 
   BSP_LED_Init();
+  static uint8_t mb_test_frame[8];
 
+  static volatile size_t mb_test_len;
+
+  static volatile uint16_t mb_test_crc;
+
+  mb_test_len = Modbus_BuildReadHolding(
+      1,
+      0x0000,
+      2,
+      mb_test_frame,
+      sizeof(mb_test_frame));
+
+  mb_test_crc = Modbus_CRC16(
+      mb_test_frame,
+      6);
   /* 启动 FreeRTOS 任务 */
   APP_Task_Init();
-  /* USER CODE END 2 */
+
+    /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
