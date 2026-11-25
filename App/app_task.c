@@ -5,6 +5,7 @@
 #include "BSP/LED/bsp_led.h"
 #include "APP/app_uart.h"
 #include "APP/app_sensor.h"
+#include "App/app_modbus.h"
 /*================ 任务配置 ================*/
 
 #define LED0_TASK_STACK_SIZE 128U
@@ -79,6 +80,8 @@ void APP_Task_Init(void)
 
     // 启动监视器任务
     APP_Monitor_TaskCreate();
+
+    APP_Modbus_TaskCreate();
     /* 启动任务调度器 */
     vTaskStartScheduler();
 

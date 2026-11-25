@@ -55,6 +55,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     BSP/BEEP/bsp_beep.c
     BSP/ADC/bsp_adc.c
     BSP/FLASH/bsp_flash.c
+    BSP/RS485/bsp_rs485.c
      # FreeRTOS 内核源码
     FreeRTOS/src/tasks.c
     FreeRTOS/src/list.c
@@ -75,6 +76,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/app_sensor.c
     App/app_rtos_hooks.c
     App/app_monitor.c
+    App/app_modbus.c
 
     Protocol/modbus_crc.c
     Protocol/modbus_rtu.c

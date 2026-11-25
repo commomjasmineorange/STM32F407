@@ -37,7 +37,7 @@
 #include "BSP/BEEP/bsp_beep.h"
 #include "BSP/ADC/bsp_adc.h"
 #include "BSP/FLASH/bsp_flash.h"
-
+#include "BSP/RS485/bsp_rs485.h"
 #include "Protocol/modbus_rtu.h"
 #include "Protocol/modbus_crc.h"
 
@@ -113,6 +113,7 @@ int main(void)
   MX_ADC3_Init();
   MX_TIM2_Init();
   MX_SPI1_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   BSP_LED_Init();
   BSP_KEY_Init();
@@ -141,26 +142,12 @@ int main(void)
   lcd_put_text(4, 1, "Count: ", BLACK);
 
   BSP_LED_Init();
-  static uint8_t mb_test_frame[8];
+  BSP_RS485_Init();
 
-  static volatile size_t mb_test_len;
-
-  static volatile uint16_t mb_test_crc;
-
-  mb_test_len = Modbus_BuildReadHolding(
-      1,
-      0x0000,
-      2,
-      mb_test_frame,
-      sizeof(mb_test_frame));
-
-  mb_test_crc = Modbus_CRC16(
-      mb_test_frame,
-      6);
   /* 启动 FreeRTOS 任务 */
   APP_Task_Init();
 
-    /* USER CODE END 2 */
+  /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */

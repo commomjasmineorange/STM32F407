@@ -32,4 +32,32 @@ size_t Modbus_BuildReadHolding(
     uint8_t *out,
     size_t capacity);
 
+/* 解析结果状态码：方便排查到底是超时、CRC 错，还是从站报错 */
+typedef enum
+{
+    MODBUS_OK = 0,             /* 解析成功 */
+    MODBUS_ERR_PARAM,          /* 传入参数非法 */
+    MODBUS_ERR_FRAME_LEN,      /* 帧长度不对（太短或字节数不匹配） */
+    MODBUS_ERR_CRC,            /* CRC16 校验失败（总线干扰或数据错位） */
+    MODBUS_ERR_SLAVE_MISMATCH, /* 回复的从站地址不是我们问的那台 */
+    MODBUS_ERR_FUNC_MISMATCH,  /* 回复的功能码不对 */
+    MODBUS_ERR_EXCEPTION       /* 从站明确返回了异常码（功能码最高位置 1，即 0x83） */
+} Modbus_Status_t;
+
+/**
+ * @brief 解析 0x03 读保持寄存器的响应帧
+ * @param rx           收到的原始字节数组
+ * @param rx_len       收到的字节长度
+ * @param expect_slave 期望的从站地址（刚才发给谁就填谁）
+ * @param expect_qty   期望的寄存器数量（刚才问了几个就填几个）
+ * @param out_regs     输出数组：存放解析出来的 16 位寄存器值
+ * @param out_ex_code  如果从站返回异常(0x83)，把异常码写到这里（可传 NULL）
+ */
+Modbus_Status_t Modbus_ParseReadHolding(
+    const uint8_t *rx,
+    size_t rx_len,
+    uint8_t expect_slave,
+    uint16_t expect_qty,
+    uint16_t *out_regs,
+    uint8_t *out_ex_code);
 #endif

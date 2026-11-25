@@ -66,3 +66,76 @@ size_t Modbus_BuildReadHolding(
     /* 返回有效帧长度，而非缓冲区容量；发送时使用这个长度。 */
     return MODBUS_READ_REQ_SIZE;
 }
+
+/*
+ * 0x03 正常响应帧布局：
+ *   [0]       [1]     [2]          [3 .. 3+2*qty-1]      [最后2字节]
+ *   从站地址   0x03    字节数(2*qty) 寄存器数据(高字节在前)  CRC低 / CRC高
+ *   总长度 = 5 + 2 * quantity
+ *
+ * 0x03 异常响应帧布局（固定 5 字节）：
+ *   [0]       [1]     [2]      [3]     [4]
+ *   从站地址   0x83    异常码    CRC低   CRC高
+ */
+Modbus_Status_t Modbus_ParseReadHolding(
+    const uint8_t *rx,
+    size_t rx_len,
+    uint8_t expect_slave,
+    uint16_t expect_qty,
+    uint16_t *out_regs,
+    uint8_t *out_ex_code)
+{
+    /* 1. 检查入参 */
+    if ((rx == NULL) || (out_regs == NULL) || (expect_qty == 0U) || (expect_qty > 125U))
+    {
+        return MODBUS_ERR_PARAM;
+    }
+    /* 任何合法 Modbus 响应帧（哪怕是异常帧）最少也有 5 字节 */
+    if (rx_len < 5U)
+    {
+        return MODBUS_ERR_FRAME_LEN;
+    }
+    /* 2. 先校验 CRC16（覆盖除最后 2 字节外的所有数据） */
+    uint16_t calc_crc = Modbus_CRC16(rx, rx_len - 2);
+    /* Modbus RTU 的 CRC 是小端序：低字节在前，高字节在后 */
+    uint16_t recv_crc = (uint16_t)rx[rx_len - 2] | (uint16_t)(rx[rx_len - 1] << 8);
+
+    /*判断校验位*/
+    if (calc_crc != recv_crc)
+        return MODBUS_ERR_CRC;
+    /*3 核对从站地址*/
+    if (rx[0] != expect_slave)
+    {
+        return MODBUS_ERR_SLAVE_MISMATCH;
+    }
+
+    /* 4. 判断是不是从站返回的异常响应（0x03 | 0x80 = 0x83） */
+    if (rx[1] == (MODBUS_FC_READ_HOLDING | 0x80U))
+    {
+        if (out_ex_code != NULL)
+        {
+            *out_ex_code = rx[2];
+        }
+        return MODBUS_ERR_EXCEPTION;
+    }
+
+    /* 5. 核对功能码是否为 0x03 */
+    if (rx[1] != MODBUS_FC_READ_HOLDING)
+    {
+        return MODBUS_ERR_FUNC_MISMATCH;
+    }
+    /* 6. 核对字节数和总帧长 */
+    uint8_t expect_bytes = (uint8_t)(expect_qty * 2U);
+    size_t expect_len = 5U + (size_t)expect_bytes;
+    if ((rx[2] != expect_bytes) || (rx_len != expect_len))
+    {
+        return MODBUS_ERR_FRAME_LEN;
+    }
+    /* 7. 按大端序（高字节在前）拼出每个 16 位寄存器值 */
+    for (uint16_t i = 0U; i < expect_qty; i++)
+    {
+        size_t offset = 3U + (size_t)i * 2U;
+        out_regs[i] = ((uint16_t)rx[offset] << 8) | (uint16_t)rx[offset + 1U];
+    }
+    return MODBUS_OK;
+}

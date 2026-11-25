@@ -25,6 +25,7 @@ static volatile size_t s_min_free_heap = 0;
 
 static volatile uint32_t s_snapshot_fail = 0;
 
+void APP_Monitor_TaskCreate(void);
 static void Monitor_Task(void *argument)
 {
     (void)argument;

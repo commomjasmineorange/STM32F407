@@ -75,6 +75,8 @@ void Error_Handler(void);
 #define FLASH_CS_GPIO_Port GPIOB
 #define LCD_BL_Pin GPIO_PIN_15
 #define LCD_BL_GPIO_Port GPIOB
+#define RS485_RE_Pin GPIO_PIN_8
+#define RS485_RE_GPIO_Port GPIOG
 
 /* USER CODE BEGIN Private defines */
 
