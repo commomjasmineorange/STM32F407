@@ -1,3 +1,13 @@
+/**
+ * @file    app_sensor.c
+ * @brief   板载 ADC 传感器周期采集任务（邮箱队列模式：只保留最新快照）
+ * @note    架构要点：
+ *          1. Sensor_Task 每 200ms 读取一次由 DMA 双半缓冲维护的 ADC 均值快照。
+ *          2. 使用长度为 1 的队列 s_sensor_queue + xQueueOverwrite() 覆盖写入，
+ *             消费方通过 APP_Sensor_GetLatest()（xQueuePeek）非阻塞读取而不删除数据，
+ *             适用于 LCD 显示与状态观察等“只关心最新值”的场景。
+ */
+
 #include "app_sensor.h"
 #include "FreeRTOS.h"
 #include "task.h"

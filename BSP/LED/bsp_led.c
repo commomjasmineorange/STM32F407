@@ -1,10 +1,9 @@
 #include "bsp_led.h"
 #include "stm32f4xx_hal.h"
 
-/* LED 硬件映射表 */
+/* LED 逻辑编号到硬件 GPIO 端口/引脚的映射表 */
 typedef struct
 {
-    /* data */
     GPIO_TypeDef *port;
     uint16_t pin;
 } BSP_LED_Hardware_t;

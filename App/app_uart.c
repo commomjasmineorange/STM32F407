@@ -1,3 +1,13 @@
+/**
+ * @file    app_uart.c
+ * @brief   USART1 调试串口接收任务（基于弱函数钩子 + FreeRTOS 任务通知）
+ * @note    架构要点：
+ *          1. 重写 bsp_uart.c 中的弱函数 BSP_UART_RxEventHook()，在 DMA/IDLE 中断中
+ *             调用 vTaskNotifyGiveFromISR() 唤醒本任务，避免轮询浪费 CPU。
+ *          2. 平时休眠在 ulTaskNotifyTake(pdTRUE, 10ms)：有数据瞬间唤醒处理，
+ *             无数据时每 10ms 巡检一次 BSP_UART_Service() 以执行硬件错误自恢复。
+ */
+
 #include "app_uart.h"
 #include "BSP/UART/bsp_uart.h"
 #include "FreeRTOS.h"

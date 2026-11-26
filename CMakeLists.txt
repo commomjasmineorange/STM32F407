@@ -77,6 +77,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/app_rtos_hooks.c
     App/app_monitor.c
     App/app_modbus.c
+    App/app_storage.c
 
     Protocol/modbus_crc.c
     Protocol/modbus_rtu.c

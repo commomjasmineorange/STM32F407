@@ -43,6 +43,7 @@
 
 #include "App/app_task.h"
 #include "App/app_sensor.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

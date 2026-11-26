@@ -1,3 +1,15 @@
+/**
+ * @file    bsp_rs485.c
+ * @brief   板载 RS485（USART2 + SP3485 方向脚 PG8）异步驱动实现
+ * @note    核心机制：
+ *          1. 接收：USART2 + DMA1_Stream5 Circular 模式 + IDLE/HT/TC 中断，
+ *             在中断中将新增字节搬运至带 __DMB() 内存屏障的 SPSC 环形缓冲区，
+ *             并通过弱函数 BSP_RS485_RxEventHook() 通知上层（与 RTOS 解耦）。
+ *          2. 发送：拉高 RS485_RE -> HAL_UART_Transmit() 等待硬件 TC 发送完成 ->
+ *             立刻拉低 RS485_RE 切回接收态，防止截断帧尾或漏收从站应答。
+ *          3. 健壮性：HAL 错误回调仅置位恢复标志，由任务上下文 BSP_RS485_Service() 限频重启 DMA。
+ */
+
 #include "bsp_rs485.h"
 #include "main.h"  /* 提供 RS485_RE_GPIO_Port、RS485_RE_Pin */
 #include "usart.h" /* CubeMX 生成：提供 huart2 */
